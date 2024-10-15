@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customer {
+  id       String  @id @default(cuid())
+  name     String?
+  email    String?
+  password String?
+  cart     cart[]
+}
+
+model product {
+  id               String   @id @default(cuid())
+  name             String?
+  variants         product_variant[]
+  details          product_detail[]
+  images           product_img[]
+  categories       category[]
+}
+
+model product_variant {
+  id          String   @id @default(cuid())
+  color       String?
+  color_code   String?
+  size        String?
+  product_code   String  
+  remains     Float?
+  product     product @relation(fields: [product_code], references: [id])
+  cartItem cartItem[]
+}
+
+model product_detail {
+  id                String   @id @default(cuid())
+  price             Float?
+  promotion_price    Float?
+  description       String?
+  rating            String? 
+  productId         String   @map("product_code")
+  product          product @relation(fields: [productId], references: [id])
+}
+
+model product_img {
+  id                String   @id @default(cuid())
+  productId         String   @map("product_code")
+  productDetailId   String?  @map("product_detail_code")
+  imgUrl            String?
+  product          product @relation(fields: [productId], references: [id])
+}
+
+model category {
+  id           String   @id @default(cuid())
+  productId    String   @map("product_code")
+  categoryName String?
+  product      product @relation(fields: [productId], references: [id])
+}
+
+model cartItem {
+  id        String   @id @default(cuid())
+  productId String   
+  skucode   String   
+  qty       Float?
+  product_variant product_variant @relation(fields: [skucode], references: [id])
+  cart cart[]
+}
+
+model cart {
+  id            String     @id @default(cuid())
+  customerId    String   
+  itemCodeid    String?
+  date          DateTime?
+  itemCode      cartItem?  @relation(fields: [itemCodeid], references: [id])
+  customer      customer @relation(fields: [customerId], references: [id])
+}
