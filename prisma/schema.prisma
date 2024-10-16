@@ -26,7 +26,7 @@ model product {
   name             String?
   variants         product_variant[]
   details          product_detail[]
-  images           product_img[]
+  img_url          product_img[]
   categories       category[]
 }
 
@@ -44,19 +44,19 @@ model product_variant {
 model product_detail {
   id                String   @id @default(cuid())
   price             Float?
-  promotion_price    Float?
+  promotion_price   Float?
   description       String?
   rating            String? 
   productId         String   @map("product_code")
-  product          product @relation(fields: [productId], references: [id])
+  product           product @relation(fields: [productId], references: [id])
 }
 
 model product_img {
   id                String   @id @default(cuid())
   productId         String   @map("product_code")
   productDetailId   String?  @map("product_detail_code")
-  imgUrl            String?
-  product          product @relation(fields: [productId], references: [id])
+  img_url           String?
+  product           product @relation(fields: [productId], references: [id])
 }
 
 model category {
