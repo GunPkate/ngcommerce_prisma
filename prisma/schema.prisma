@@ -24,10 +24,11 @@ model customer {
 model product {
   id               String   @id @default(cuid())
   name             String?
+  cat_id           String 
   variants         product_variant[]
   details          product_detail[]
   img_url          product_img[]
-  categories       category[]
+  category         category@relation(fields: [cat_id], references: [id])
 }
 
 model product_variant {
@@ -38,7 +39,7 @@ model product_variant {
   product_code   String  
   remains     Float?
   product     product @relation(fields: [product_code], references: [id])
-  cartItem cartItem[]
+  cartItem    cartItem[]
 }
 
 model product_detail {
@@ -47,28 +48,28 @@ model product_detail {
   promotion_price   Float?
   description       String?
   rating            String? 
-  productId         String   @map("product_code")
-  product           product @relation(fields: [productId], references: [id])
+  product_code      String
+  product           product @relation(fields: [product_code], references: [id])
 }
 
 model product_img {
   id                String   @id @default(cuid())
-  productId         String   @map("product_code")
+  product_code      String
   productDetailId   String?  @map("product_detail_code")
   img_url           String?
-  product           product @relation(fields: [productId], references: [id])
+  product           product @relation(fields: [product_code], references: [id])
 }
 
 model category {
   id           String   @id @default(cuid())
-  productId    String   @map("product_code")
-  categoryName String?
-  product      product @relation(fields: [productId], references: [id])
+  category_name String?
+  category_sub String?
+  product      product[]
 }
 
 model cartItem {
   id        String   @id @default(cuid())
-  productId String   
+  product_code String   
   skucode   String   
   qty       Float?
   product_variant product_variant @relation(fields: [skucode], references: [id])
