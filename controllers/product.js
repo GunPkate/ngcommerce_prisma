@@ -6,12 +6,14 @@ const prisma = new PrismaClient();
 app.post("/selectProduct", async (req,res)=>{
     try{
 
-        const product = await prisma.product.findFirst({
+        const product = await prisma.product.findMany({
+            skip: 0,
+            take: 6,
             include: {
-                variants: true,
-                details: true,
-                img_url: true,
-                category: true
+                // variants: true,
+                // details: true,
+                img_url: {where: {img_code: '1'}},
+                // category: true
             }
         })
         res.send(product)

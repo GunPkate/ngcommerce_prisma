@@ -55,7 +55,7 @@ model product_detail {
 model product_img {
   id                String   @id @default(cuid())
   product_code      String
-  productDetailId   String?  @map("product_detail_code")
+  img_code          String? 
   img_url           String?
   product           product @relation(fields: [product_code], references: [id])
 }
