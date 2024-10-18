@@ -15,29 +15,29 @@ datasource db {
 
 model customer {
   id       String  @id @default(cuid())
-  name     String?
-  email    String?
-  password String?
+  name     String
+  email    String
+  password String
   cart     cart[]
 }
 
 model product {
   id               String   @id @default(cuid())
-  name             String?
+  name             String
   cat_id           String 
   variants         product_variant[]
-  details          product_detail[]
   img_url          product_img[]
   category         category@relation(fields: [cat_id], references: [id])
+  product_detail    product_detail[]
 }
 
 model product_variant {
   id          String   @id @default(cuid())
-  color       String?
-  color_code   String?
-  size        String?
+  color       String
+  color_code   String
+  size        String
   product_code   String  
-  remains     Float?
+  remains     Int
   product     product @relation(fields: [product_code], references: [id])
   cartItem    cartItem[]
 }
@@ -46,10 +46,11 @@ model product_detail {
   id                String   @id @default(cuid())
   price             Float?
   promotion_price   Float?
+  name              String
   description       String?
   rating            String? 
   product_code      String
-  product           product @relation(fields: [product_code], references: [id])
+  product           product? @relation(fields: [product_code], references: [id])
 }
 
 model product_img {
@@ -71,16 +72,16 @@ model cartItem {
   id        String   @id @default(cuid())
   product_code String   
   skucode   String   
-  qty       Float?
+  qty       Int
   product_variant product_variant @relation(fields: [skucode], references: [id])
   cart cart[]
 }
 
 model cart {
   id            String     @id @default(cuid())
-  customerId    String   
-  itemCodeid    String?
+  customer_id    String   
+  item_id    String?
   date          DateTime?
-  itemCode      cartItem?  @relation(fields: [itemCodeid], references: [id])
-  customer      customer @relation(fields: [customerId], references: [id])
+  itemCode      cartItem?  @relation(fields: [item_id], references: [id])
+  customer      customer @relation(fields: [customer_id], references: [id])
 }
