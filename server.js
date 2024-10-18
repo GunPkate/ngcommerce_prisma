@@ -13,4 +13,7 @@ app.use("/customer",customer)
 const product = require("./controllers/product")
 app.use("/product",product)
 
+const order = require('./controllers/order')
+app.use('/order',order)
+
 app.listen("3000")
