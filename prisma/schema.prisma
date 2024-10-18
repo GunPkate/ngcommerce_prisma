@@ -33,6 +33,7 @@ model product {
 
 model product_variant {
   id          String   @id @default(cuid())
+  skucode     String   
   color       String
   color_code   String
   size        String
