@@ -7,7 +7,8 @@ app.post("/product", async (req,res)=>{
     try{
         console.log(req.body)
         const id = req.body.id
-        const product = await prisma.product.findMany({
+        const product = await prisma.product.findFirst({
+            where: { id: id},
             skip: 0,
             take: 1,
             include: {
