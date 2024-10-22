@@ -75,14 +75,14 @@ model cartItem {
   skucode   String   
   qty       Int
   product_variant product_variant @relation(fields: [skucode], references: [id])
-  cart cart[]
+  cart    cart[]
 }
 
 model cart {
   id            String     @id @default(cuid())
-  customer_id    String   
-  item_id    String?
+  customer_id   String   
+  item_id       String  
   date          DateTime?
-  itemCode      cartItem?  @relation(fields: [item_id], references: [id])
-  customer      customer @relation(fields: [customer_id], references: [id])
+  itemCode      cartItem[]
+  customer      customer[]
 }

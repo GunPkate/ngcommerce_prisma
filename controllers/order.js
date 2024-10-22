@@ -24,11 +24,41 @@ app.post("/product", async (req,res)=>{
     }
 })
 
-// app.get("/allCategory", async (req, res) =>{
+app.post("/cart", async (req, res) =>{
+    try {
+        const { id, customerId, itemId} = req.body
+        console.log(req.body)
+        const cat = await prisma.cart.create({
+            // data: { item_id: id, customer_id: customerId, item_id: null }
+            data: {
+                id: id,
+                customer_id: customerId,
+                item_id: itemId
+            }
+        })
+        res.send(cat)
+    } catch (e) {
+        res.send(e.message)
+    }
+})
+
+app.get("/cart", async (req, res) =>{
+    try {
+        const { id, date} = req.body
+        const cart = await prisma.cart.findFirst({ where: { id: id, NOT: {date: null}   } })
+        res.send(cart)
+    } catch (e) {
+        res.send(e.message)
+    }
+})
+
+// app.post("/cartitem", async (req, res) =>{
 //     try {
-//         const cat = await prisma.category.findMany({
+//         const { id, productCode, skuCode, qty} = req.body
+//         const cat = await prisma.cartItem.create({
+//             data: { id: "1324",product_code: productCode, skucode: skuCode, qty: qty}
 //         })
-//         res.send(cat)
+//         res.send(cat.id)
 //     } catch (e) {
 //         res.send(e.message)
 //     }
