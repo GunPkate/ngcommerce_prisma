@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 app.post("/product", async (req,res)=>{
     try{
-        console.log(req.body)
+        // console.log(req.body)
         const id = req.body.id
         const product = await prisma.product.findFirst({
             where: { id: id},
@@ -24,10 +24,10 @@ app.post("/product", async (req,res)=>{
     }
 })
 
-app.post("/cart", async (req, res) =>{
+app.post("/createcart", async (req, res) =>{
     try {
-        const { id, customerId, itemId} = req.body
         console.log(req.body)
+        const { id, customerId, itemId} = req.body
         const cat = await prisma.cart.create({
             // data: { item_id: id, customer_id: customerId, item_id: null }
             data: {
@@ -44,24 +44,31 @@ app.post("/cart", async (req, res) =>{
 
 app.get("/cart", async (req, res) =>{
     try {
-        const { id, date} = req.body
-        const cart = await prisma.cart.findFirst({ where: { id: id, NOT: {date: null}   } })
+        const { customerId, date} = req.body
+        const cart = await prisma.cart.findFirst({ where: { customer_id: customerId  } })
         res.send(cart)
     } catch (e) {
         res.send(e.message)
     }
 })
 
-// app.post("/cartitem", async (req, res) =>{
-//     try {
-//         const { id, productCode, skuCode, qty} = req.body
-//         const cat = await prisma.cartItem.create({
-//             data: { id: "1324",product_code: productCode, skucode: skuCode, qty: qty}
-//         })
-//         res.send(cat.id)
-//     } catch (e) {
-//         res.send(e.message)
-//     }
-// })
+app.post("/cartitem", async (req, res) =>{
+    try {
+        const items = req.body
+        
+        // req.body.forEach(x=>console.log(x.id))
+        console.log(items)
+        const cat = await prisma.cartItem.createMany({
+            data: items,
+            skipDuplicates: true,
+        })
+        res.status(200).json({
+            statuscode:200, 
+            cartId: items.map(x=>x.id), 
+        })
+    } catch (e) {
+        res.send(e.message)
+    }
+})
 
 module.exports = app

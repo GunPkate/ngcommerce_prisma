@@ -74,8 +74,9 @@ model cartItem {
   product_code String   
   skucode   String   
   qty       Int
+  cart_id   String
   product_variant product_variant @relation(fields: [skucode], references: [id])
-  cart    cart[]
+  cart    cart @relation(fields: [cart_id], references: [id])
 }
 
 model cart {
