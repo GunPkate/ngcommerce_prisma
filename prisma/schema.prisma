@@ -33,7 +33,7 @@ model product {
 
 model product_variant {
   id          String   @id @default(cuid())
-  skucode     String   
+  skucode     String   @unique
   color       String
   color_code   String
   size        String
@@ -75,7 +75,7 @@ model cartItem {
   skucode   String   
   qty       Int
   cart_id   String
-  product_variant product_variant @relation(fields: [skucode], references: [id])
+  product_variant product_variant @relation(fields: [skucode], references: [skucode])
   cart    cart @relation(fields: [cart_id], references: [id])
 }
 
@@ -85,5 +85,5 @@ model cart {
   item_id       String  
   date          DateTime?
   itemCode      cartItem[]
-  customer      customer[]
+  customer      customer@relation(fields: [customer_id], references: [id])
 }
