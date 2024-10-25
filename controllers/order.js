@@ -55,9 +55,6 @@ app.get("/cart", async (req, res) =>{
 app.post("/cartitem", async (req, res) =>{
     try {
         const items = req.body
-        
-        // req.body.forEach(x=>console.log(x.id))
-        console.log(items)
         const cat = await prisma.cartItem.createMany({
             data: items,
             skipDuplicates: true,
@@ -67,7 +64,49 @@ app.post("/cartitem", async (req, res) =>{
             cartId: items.map(x=>x.id), 
         })
     } catch (e) {
+        res.status(500).json({
+            statuscode:500, 
+            error :e.message, 
+        })
+    }
+})
+
+app.get("/cartitem/:id", async (req, res) =>{
+    try {
+        let id = req.params.id
+
+        const cat = await prisma.cartItem.findMany({
+            where: { cart_id: id }
+        })
+        console.log(cat)
+        res.send(cat)
+    } catch (e) {
         res.send(e.message)
+    }
+})
+
+app.post("/deletecartitem", async (req, res) =>{
+    try {
+        const items = req.body
+        let id = [...new Set(items.map(x=>x.cart_id))]
+        let productCode = [...new Set(items.map(x=>x.product_code))]
+
+        const cat = await prisma.cartItem.findMany({ where: { cart_id: id[0], product_code: productCode[0] } })
+
+        if(cat.length > 0){
+            let a = await prisma.cartItem.deleteMany({ where: { cart_id: id[0], product_code: productCode[0] } })
+            console.log(a)
+        }
+        console.log(cat.length)
+        res.status(200).json({
+            statuscode:200, 
+            cartId: items.map(x=>x.id), 
+        })
+    } catch (e) {
+        res.status(500).json({
+            statuscode:500, 
+            error :e.message, 
+        })
     }
 })
 
