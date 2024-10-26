@@ -16,4 +16,7 @@ app.use("/product",product)
 const order = require('./controllers/order')
 app.use('/order',order)
 
+const mycart = require('./controllers/mycart')
+app.use('/mycart',mycart)
+
 app.listen("3000")
