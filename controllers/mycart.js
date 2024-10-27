@@ -16,4 +16,25 @@ app.post('/cartdetails',async (req,res) =>{
     }
 })
 
+app.post("/cartdetails/:id", async (req, res) =>{
+    try {
+        let id = req.params.id
+        let id2
+        
+        const result = await prisma.$queryRawUnsafe(
+            `select  p."name" , pv.color , pv.color_code , pv."size" , cart.qty, pi.img_url  
+			from "cartItem" cart 
+			left join product p on p.id = cart.product_code 
+            left join product_variant pv on pv.skucode  = cart.skucode 
+            left join product_img pi on pi.product_code = cart.product_code  
+            where cart.cart_id = '${id}'and pi.img_code = '1'
+            ;`
+        )
+
+    res.send(result)
+    } catch (e) {
+        res.send(e.message)
+    }
+})
+
 module.exports = app
