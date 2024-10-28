@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 app.post("/product", async (req,res)=>{
     try{
-        // console.log(req.body)
+
         const id = req.body.id
         const product = await prisma.product.findFirst({
             where: { id: id},
@@ -26,7 +26,7 @@ app.post("/product", async (req,res)=>{
 
 app.post("/createcart", async (req, res) =>{
     try {
-        console.log(req.body)
+
         const { id, customerId, itemId} = req.body
         const cat = await prisma.cart.create({
             // data: { item_id: id, customer_id: customerId, item_id: null }
@@ -78,7 +78,7 @@ app.get("/cartitem/:id", async (req, res) =>{
         const cat = await prisma.cartItem.findMany({
             where: { cart_id: id }
         })
-        console.log(cat)
+
         res.send(cat)
     } catch (e) {
         res.send(e.message)
@@ -87,20 +87,18 @@ app.get("/cartitem/:id", async (req, res) =>{
 
 app.post("/deletecartitem", async (req, res) =>{
     try {
-        const items = req.body
-        let id = [...new Set(items.map(x=>x.cart_id))]
-        let productCode = [...new Set(items.map(x=>x.product_code))]
-
-        const cat = await prisma.cartItem.findMany({ where: { cart_id: id[0], product_code: productCode[0] } })
+        const {cartId} = req.body
+        console.log(cartId)
+        const cat = await prisma.cartItem.findMany({ where: { cart_id: cartId } })
 
         if(cat.length > 0){
-            let a = await prisma.cartItem.deleteMany({ where: { cart_id: id[0], product_code: productCode[0] } })
-            console.log(a)
+            let a = await prisma.cartItem.deleteMany({ where: { cart_id: cartId } })
+            // console.log(a)
         }
-        console.log(cat.length)
+        console.log(cat)
         res.status(200).json({
             statuscode:200, 
-            cartId: items.map(x=>x.id), 
+            cartId: cartId
         })
     } catch (e) {
         res.status(500).json({
